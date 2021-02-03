@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+}
+
+group 'org.gonzales'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.6'
+    compile 'org.apache.httpcomponents:httpclient:4.5.13'
+    compile 'org.controlsfx:controlsfx:11.0.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+javafx {
+    version = "15.0.1"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    mainClassName = 'Main'
+}
+
+application {
+    applicationDefaultJvmArgs = [
+            "--add-opens=javafx.base/com.sun.javafx.event=ALL-UNNAMED",
+            "--add-opens=javafx.base/com.sun.javafx.collections=ALL-UNNAMED",
+            "--add-opens=javafx.base/com.sun.javafx.runtime=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED",
+            "--add-opens=javafx.graphics/javafx.scene=ALL-UNNAMED",
+            "--add-opens=javafx.controls/javafx.scene.control.skin=ALL-UNNAMED",
+    ]
+
+}
+
