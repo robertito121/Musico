@@ -67,21 +67,13 @@ public class HomeController implements Initializable {
             autoCompletionTextFieldBinding.setOnAutoCompleted(new EventHandler<AutoCompletionBinding.AutoCompletionEvent<String>>() {
                 @Override
                 public void handle(AutoCompletionBinding.AutoCompletionEvent<String> event) {
-                    String spotifyObjectId = "";
-                    String spotifyObjectType = "";
+                    SpotifyObject spotifyObject = null;
                     for  (Map.Entry<SpotifyObject,String> entry : spotifyObjectMap.entrySet()) {
                         if (searchTextField.getText().equals(entry.getValue())) {
-                            spotifyObjectId = entry.getKey().getId();
-                            spotifyObjectType = entry.getKey().getType();
-                            if (spotifyObjectType.equals("artist")) {
-                                Artist artist = getArtistById(spotifyObjectId);
-                            }
-                            if (spotifyObjectId.equals("track")) {
-                                Track track = getTrackById(spotifyObjectId);
-                            }
-
+                            spotifyObject = entry.getKey();
                         }
                     }
+
                 }
             });
         }
@@ -90,54 +82,48 @@ public class HomeController implements Initializable {
         }
     }
 
-    private Artist getArtistById(String id) {
-        Artist artist = null;
+    private SpotifyObject getSpotifyObjectInfo(SpotifyObject spotifyObject) {
+        String searchResponse = "";
+        String api_path = "";
+        if (spotifyObject.getType().equals("artist")) {
+            api_path = "artists";
+        }
+        if (spotifyObject.getType().equals("track")) {
+            api_path = "tracks";
+        }
         try {
             String spotifyApiToken = tokenService.getSpotifyToken();
             URI searchUri = new URIBuilder()
                     .setScheme("https")
                     .setHost("api.spotify.com")
-                    .setPath("v1/artists")
-                    .addParameter("ids", id)
+                    .setPath("v1/" + api_path)
+                    .addParameter("ids", spotifyObject.getId())
                     .build();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(searchUri)
                     .header("Authorization", spotifyApiToken)
                     .build();
-            String searchResponse = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            ArtistList artistList = gson.fromJson(searchResponse, ArtistList.class);
-            artist = artistList.getArtists().get(0);
+            searchResponse = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
         }
-        catch (URISyntaxException uriSyntaxException) {
+        catch (URISyntaxException | InterruptedException | IOException exception) {
+            exception.getStackTrace();
+        }
+
+        if (api_path.equals("artists")) {
+            ArtistList artistList = gson.fromJson(searchResponse, ArtistList.class);
+            return artistList.getArtists().get(0);
 
         }
-        catch (InterruptedException | IOException e) {
-            e.printStackTrace();
+        else if (api_path.equals("tracks")) {
+            TrackList trackList = gson .fromJson(searchResponse, TrackList.class);
+            return trackList.getTracks().get(0);
         }
-        return artist;
+        else {
+            return null;
+        }
     }
 
-    private Track getTrackById(String id) {
-        Track track = null;
-        try {
-            String spotifyApiToken = tokenService.getSpotifyToken();
-            URI searchUri = new URIBuilder()
-                    .setScheme("https")
-                    .setHost("api.spotify.com")
-                    .setPath("v1/tracks")
-                    .addParameter("ids", id)
-                    .build();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(searchUri)
-                    .header("Authorization", spotifyApiToken)
-                    .build();
-            String searchResponse = client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            TrackList trackList = gson.fromJson(searchResponse, TrackList.class);
-            track = trackList.getTracks().get(0);
-        }
-        catch (URISyntaxException | IOException | InterruptedException exception) {
+    private void loadResultsPanel() {
 
-        }
-        return track;
     }
 }
