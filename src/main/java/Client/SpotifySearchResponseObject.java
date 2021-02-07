@@ -1,19 +1,28 @@
-package Model;
+package Client;
 
+import Model.AlbumList;
+import Model.ArtistList;
+import Model.SpotifyObject;
+import Model.TrackList;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class SpotifyResponseObject {
+public class SpotifySearchResponseObject {
 
     @SerializedName(value = "artists")
     private ArtistList artistsList;
+
     @SerializedName(value = "tracks")
     private TrackList tracksList;
 
-    public SpotifyResponseObject(ArtistList artistsList, TrackList tracksList) {
+    @SerializedName(value = "albums")
+    private AlbumList albumList;
+
+    public SpotifySearchResponseObject(ArtistList artistsList, TrackList tracksList, AlbumList albumList) {
         this.artistsList = artistsList;
         this.tracksList = tracksList;
+        this.albumList = albumList;
     }
 
     public ArrayList<SpotifyObject> getAllSpotifyResponseObjects() {
@@ -36,6 +45,14 @@ public class SpotifyResponseObject {
 
     public void setTracksList(TrackList tracksList) {
         this.tracksList = tracksList;
+    }
+
+    public AlbumList getAlbumList() {
+        return albumList;
+    }
+
+    public void setAlbumList(AlbumList albumList) {
+        this.albumList = albumList;
     }
 }
 

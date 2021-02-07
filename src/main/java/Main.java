@@ -15,6 +15,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("HomeScreen.fxml")));
         primaryStage.setTitle("Musico");
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

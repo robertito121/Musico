@@ -1,11 +1,15 @@
+import Client.SpotifySearchResponseObject;
+import Client.TokenClient;
 import Model.*;
 import com.google.gson.Gson;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import impl.org.controlsfx.autocompletion.SuggestionProvider;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import org.apache.http.client.utils.URIBuilder;
 import org.controlsfx.control.textfield.AutoCompletionBinding;
 import java.io.IOException;
@@ -20,10 +24,12 @@ import java.util.*;
 
 public class HomeController implements Initializable {
 
+    @FXML private AnchorPane homeScreen;
     @FXML private TextField searchTextField;
+    @FXML SplitPane resultsPanel;
     private Gson gson;
     private HttpClient client;
-    private TokenService tokenService;
+    private TokenClient tokenClient;
     private SuggestionProvider<String> provider;
     private AutoCompletionTextFieldBinding<String> autoCompletionTextFieldBinding;
 
@@ -32,7 +38,7 @@ public class HomeController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         gson = new Gson();
         client = HttpClient.newHttpClient();
-        tokenService = new TokenService();
+        tokenClient = new TokenClient();
         provider = SuggestionProvider.create(Collections.emptyList());
         autoCompletionTextFieldBinding =  new AutoCompletionTextFieldBinding<>(searchTextField, provider);
     }
@@ -43,7 +49,7 @@ public class HomeController implements Initializable {
         String searchParameter = rawSearchParameter.replaceAll(" ", "%20");
         searchParameter = '"'+searchParameter+'"';
         try {
-            String spotifyApiToken = tokenService.getSpotifyToken();
+            String spotifyApiToken = tokenClient.getSpotifyToken();
             URI searchUri = new URIBuilder()
                     .setScheme("https")
                     .setHost("api.spotify.com")
@@ -57,20 +63,29 @@ public class HomeController implements Initializable {
                     .header("Authorization", spotifyApiToken)
                     .build();
             String searchResponse =  client.send(request, HttpResponse.BodyHandlers.ofString()).body();
-            SpotifyResponseObject spotifyResponseObject = gson.fromJson(searchResponse, SpotifyResponseObject.class);
-            Map<SpotifyObject,String> spotifyObjectMap = new HashMap<>();
-            for (SpotifyObject spotifyObject : spotifyResponseObject.getAllSpotifyResponseObjects()) {
-                spotifyObjectMap.put(spotifyObject, spotifyObject.getName());
+            SpotifySearchResponseObject spotifySearchResponseObject = gson.fromJson(searchResponse, SpotifySearchResponseObject.class);
+            Map<SpotifyObject,String> spotifyObjects = new HashMap<>();
+            for (SpotifyObject spotifyObject : spotifySearchResponseObject.getAllSpotifyResponseObjects()) {
+                spotifyObjects.put(spotifyObject, spotifyObject.getName());
             }
             provider.clearSuggestions();
-            provider.addPossibleSuggestions(spotifyObjectMap.values());
+            provider.addPossibleSuggestions(spotifyObjects.values());
             autoCompletionTextFieldBinding.setOnAutoCompleted(new EventHandler<AutoCompletionBinding.AutoCompletionEvent<String>>() {
                 @Override
                 public void handle(AutoCompletionBinding.AutoCompletionEvent<String> event) {
                     SpotifyObject spotifyObject = null;
-                    for  (Map.Entry<SpotifyObject,String> entry : spotifyObjectMap.entrySet()) {
+                    for  (Map.Entry<SpotifyObject,String> entry : spotifyObjects.entrySet()) {
                         if (searchTextField.getText().equals(entry.getValue())) {
-                            spotifyObject = entry.getKey();
+                            if (entry.getKey().getType().equals("artist")) {
+                                Artist artist = (Artist) entry.getKey();
+                                System.out.println(artist.getFollowers().getSpotifyFollowers());
+                                loadArtistPanel(artist);
+                            }
+                            if (entry.getKey().getType().equals("track")) {
+                                Track track = (Track) entry.getKey();
+                                //TODO create track panel
+                            }
+
                         }
                     }
 
@@ -92,7 +107,7 @@ public class HomeController implements Initializable {
             api_path = "tracks";
         }
         try {
-            String spotifyApiToken = tokenService.getSpotifyToken();
+            String spotifyApiToken = tokenClient.getSpotifyToken();
             URI searchUri = new URIBuilder()
                     .setScheme("https")
                     .setHost("api.spotify.com")
@@ -123,7 +138,22 @@ public class HomeController implements Initializable {
         }
     }
 
-    private void loadResultsPanel() {
+    private void loadArtistPanel(Artist artist) {
+        try {
+            FXMLLoader artistPanelLoader = new FXMLLoader(getClass().getClassLoader().getResource("ArtistPanel.fxml"));
+            resultsPanel.getItems().remove(1);
+            resultsPanel.getItems().add(artistPanelLoader.load());
+            ArtistPanelController artistPanelController = artistPanelLoader.getController();
+            artistPanelController.populateArtistPanel(artist);
+            artistPanelController.populateSongsAndAlbums();
+
+        }
+        catch (IOException exception) {
+
+        }
+
+
+
 
     }
 }

@@ -1,3 +1,5 @@
+package Client;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -7,13 +9,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class TokenService {
+public class TokenClient {
 
     private HttpClient client;
     private Gson gson;
     private final String SPOTIFY_AUTH_TOKEN = System.getenv("AUTH_TOKEN");
 
-    public TokenService() {
+    public TokenClient() {
         client = HttpClient.newHttpClient();
         gson = new Gson();
     }
