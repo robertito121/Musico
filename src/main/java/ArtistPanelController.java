@@ -118,12 +118,12 @@ public class ArtistPanelController implements Initializable {
         for (int i = 0; i < trackImages.size(); i++) {
             trackImages.get(i).setImage(new Image(tracks.get(i).getAlbum().getImages().get(0).getUrl()));
             trackNames.get(i).setText(tracks.get(i).getName());
-            trackYears.get(i).setText(tracks.get(i).getAlbum().getReleaseDate().substring(0,3));
+            trackYears.get(i).setText(tracks.get(i).getAlbum().getReleaseDate().substring(0,4));
         }
         for (int i = 0; i < albumImages.size(); i++) {
             albumImages.get(i).setImage(new Image(albums.get(i).getImages().get(0).getUrl()));
             albumNames.get(i).setText(albums.get(i).getName());
-            albumYears.get(i).setText(albums.get(i).getReleaseDate().substring(0,3));
+            albumYears.get(i).setText(albums.get(i).getReleaseDate().substring(0,4));
         }
     }
 

@@ -16,10 +16,9 @@ public class Album extends SpotifyObject {
     @SerializedName(value = "total_tracks")
     private int totalTracks;
 
-    public Album(String id, String name, String type,
-                 int popularity, ArrayList<Artist> artists, ArrayList<Image> images,
+    public Album(String id, String name, String type, ArrayList<Artist> artists, ArrayList<Image> images,
                  String releaseDate, int totalTracks, TrackList tracks) {
-        super(id, name, type, popularity);
+        super(id, name, type);
         this.artists = artists;
         this.images = images;
         this.releaseDate = releaseDate;

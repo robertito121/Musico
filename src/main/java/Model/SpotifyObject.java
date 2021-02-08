@@ -6,17 +6,12 @@ public class SpotifyObject {
 
     private String id;
     private String name;
-
-    @SerializedName(value = "type", alternate = "album_type")
     private String type;
 
-    private int popularity;
-
-    public SpotifyObject(String id, String name, String type, int popularity) {
+    public SpotifyObject(String id, String name, String type) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.popularity = popularity;
     }
 
     public String getType() {
@@ -42,13 +37,4 @@ public class SpotifyObject {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(int popularity) {
-        this.popularity = popularity;
-    }
-
 }

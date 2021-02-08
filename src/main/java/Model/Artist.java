@@ -7,12 +7,14 @@ public class Artist extends SpotifyObject {
     private ArrayList<String> genres;
     private ArrayList<Image> images;
     private Followers followers;
+    private int popularity;
 
     public Artist(String id, String name, String type, int popularity, ArrayList<String> genres, ArrayList<Image> images, Followers followers) {
-        super(id, name, type, popularity);
+        super(id, name, type);
         this.genres = genres;
         this.images = images;
         this.followers = followers;
+        this.popularity = popularity;
     }
 
     public ArrayList<String> getGenres() {
@@ -37,5 +39,13 @@ public class Artist extends SpotifyObject {
 
     public void setFollowers(Followers followers) {
         this.followers = followers;
+    }
+
+    public int getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(int popularity) {
+        this.popularity = popularity;
     }
 }
