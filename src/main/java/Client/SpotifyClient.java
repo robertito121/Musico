@@ -14,7 +14,9 @@ import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/**
+ * Spotify Web Service Client
+ */
 public class SpotifyClient {
 
     private final String URI_SCHEME = "https";
@@ -27,14 +29,20 @@ public class SpotifyClient {
         gson = new Gson();
     }
 
+    /**
+     * Searches the Spotify Web Service. At this time, only Artist and Track type are supported
+     * @param String searchParameter
+     * @param String spotifyToken
+     * @return Map<SpotifyObject,String>
+     */
     public Map<SpotifyObject,String> searchSpotify(String searchParameter, String spotifyToken) {
         Map<SpotifyObject,String> spotifyObjects = new HashMap<>();
         searchParameter = searchParameter.replaceAll(" ", "%20");
         searchParameter = '"'+searchParameter+'"';
         try {
             URI searchUri = new URIBuilder()
-                    .setScheme("https")
-                    .setHost("api.spotify.com")
+                    .setScheme(URI_SCHEME)
+                    .setHost(URI_HOST)
                     .setPath("v1/search")
                     .addParameter("q", searchParameter)
                     .addParameter("type", "track,artist")
@@ -56,6 +64,13 @@ public class SpotifyClient {
         return spotifyObjects;
     }
 
+    /**
+     * Searches for Tracks given an Artist name and returns the top 9 Artist classified by
+     * its popularity rating. Limit overall result is 20
+     * @param String artistName
+     * @param String spotifyToken
+     * @return ArrayList<Track>
+     */
     public ArrayList<Track> searchPopularTracksByArtist(String artistName, String spotifyToken) {
         URI searchUri = null;
         String searchResponse = "";
@@ -89,6 +104,12 @@ public class SpotifyClient {
         return tracks;
     }
 
+    /**
+     * Searches the 3 most recent albums in the last 5 years for any given Artist.
+     * @param String artistName
+     * @param String spotifyToken
+     * @return ArrayList<Album>
+     */
     public ArrayList<Album> searchAlbumByArtist(String artistName, String spotifyToken) {
         URI searchUri = null;
         String searchResponse = "";
@@ -96,7 +117,7 @@ public class SpotifyClient {
         String searchParameter = artistName.replaceAll(" ", "%20");
         String currentYear = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
         searchParameter = "artist:" + '"'+searchParameter+'"' + " year:" +
-                            (Integer.parseInt(currentYear) - 10) + "-" + currentYear;
+                            (Integer.parseInt(currentYear) - 5) + "-" + currentYear;
         try {
             searchUri = new URIBuilder()
                     .setScheme(URI_SCHEME)

@@ -2,7 +2,6 @@ package Client;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import javax.inject.Named;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,7 +9,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-
+/**
+ * Spotify Web Service Token Client
+ */
 public class TokenClient {
 
     private HttpClient client;
@@ -22,6 +23,13 @@ public class TokenClient {
         gson = new Gson();
     }
 
+    /**
+     * returns a new bearer access_token to be used for Authentication to Spotify Web Server
+     * @return String
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws URISyntaxException
+     */
     public String getSpotifyToken() throws IOException, InterruptedException, URISyntaxException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://accounts.spotify.com/api/token"))

@@ -8,6 +8,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+/**
+ * Spotify response object
+ */
 public class SpotifySearchResponseObject {
 
     @SerializedName(value = "artists")
@@ -25,6 +28,10 @@ public class SpotifySearchResponseObject {
         this.albumList = albumList;
     }
 
+    /**
+     * Returns all response objects
+     * @return ArrayList<SpotifyObject>
+     */
     public ArrayList<SpotifyObject> getAllSpotifyResponseObjects() {
         ArrayList<SpotifyObject> spotifyObjects = new ArrayList<>(artistsList.getArtists());
         spotifyObjects.addAll(tracksList.getTracks());
